@@ -22,7 +22,7 @@ app.use(express.static(path.join(__dirname, "/client/build")));
 
 app.use(
   session({
-    secret: process.env.session_key,
+    secret: process.env.SESSION_KEY,
     resave: false,
     saveUninitialized: false,
   })
