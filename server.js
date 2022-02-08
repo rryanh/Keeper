@@ -70,7 +70,6 @@ app
   .get(
     passport.authenticate("google", { failureRedirect: "/login" }),
     function (_, res) {
-      console.log("this ran");
       res.sendFile(path.join(__dirname, "/client/build"));
     }
   );
@@ -108,12 +107,9 @@ function deleteNote(req, res) {
   const note = req.body;
   try {
     User.findById(req.user.id, function (err, user) {
-      console.log("delete hit");
       if (err) throw new Error(err);
       if (!user.notes) return res.send({ success: true });
       let userNoteArr = JSON.parse(user.notes);
-      console.log(userNoteArr);
-      console.log(note);
       user.notes = JSON.stringify(
         userNoteArr.filter(
           (userNote) =>
