@@ -11,7 +11,6 @@ import GoogleStrategy from "passport-google-oauth20";
 import findOrCreate from "mongoose-findorcreate";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const PORT = 3000;
 
 const app = express();
 // middleware
@@ -32,7 +31,7 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-mongoose.connect(`${process.env.mongo_DB}/keeperDB`);
+mongoose.connect(`${process.env.MONGO_DB}/keeperDB`);
 
 const userSchema = new mongoose.Schema({
   googleId: String,
@@ -160,4 +159,5 @@ app.get("*", function (req, res) {
   });
 });
 
-app.listen(process.env.PORT, () => console.log(`running on port 3000`));
+const PORT = +process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`running on port 3000`));
