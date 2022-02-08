@@ -60,7 +60,7 @@ passport.use(
     {
       clientID: process.env.CLIENT_ID,
       clientSecret: process.env.CLIENT_SECRET,
-      callbackURL: "http://localhost:3000/app",
+      callbackURL: `${process.env.SERVER_URL}/app`,
       proxy: true,
     },
     function (accessToken, refreshToken, profile, done) {
