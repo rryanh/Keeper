@@ -1,0 +1,28 @@
+.login-container {
+  position: relative;
+  width: 550px;
+  margin: 150px auto 20px auto;
+  background: #fff;
+  padding: 25px 40px;
+  border-radius: 7px;
+  box-shadow: 0 1px 5px rgb(138, 137, 137);
+}
+
+.btn-icon {
+  padding-right: 15px;
+}
+
+.btn-google {
+  background-color: #de5246;
+  color: white;
+}
+
+.btn-facebook {
+  background-color: #4267b2;
+  /* color: white; */
+}
+
+.btn-linkedin {
+  background-color: #0077b5;
+  /* color: white; */
+}
