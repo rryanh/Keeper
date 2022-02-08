@@ -9,8 +9,7 @@ export default function Home() {
 
   async function addNote() {
     const newNotes = await AJAX("/notes");
-
-    if (newNotes === notes) return;
+    if (newNotes.length === notes.length) return;
     setNotes(newNotes);
   }
 
