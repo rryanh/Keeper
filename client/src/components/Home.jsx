@@ -34,7 +34,7 @@ export default function Home() {
       <div>
         <CreateArea onAdd={addNote} />
         <div className="container">
-          <Masonry columns={3} spacing={{ sm: 2, md: 3 }}>
+          <Masonry columns={3} spacing={{ sm: 3, md: 3 }}>
             {notes.map((noteItem, index) => {
               return (
                 <Note
