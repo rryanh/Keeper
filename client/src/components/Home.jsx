@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import Note from "../components/Note";
-import CreateArea from "../components//CreateArea";
+import Note from "./Note";
+import CreateArea from "./CreateArea";
 import { AJAX } from "../helper";
 import Masonry from "@mui/lab/Masonry";
 
@@ -9,8 +9,9 @@ export default function Home() {
 
   async function addNote() {
     const newNotes = await AJAX("/notes");
-    console.log(newNotes);
+
     if (newNotes === notes) return;
+
     setNotes(newNotes);
   }
 

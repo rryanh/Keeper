@@ -88,8 +88,9 @@ app
   .get(passport.authenticate("google", { scope: ["profile"] }));
 
 app.route("/auth-user").get(function (req, res) {
-  if (req.isAuthenticated()) return { login: true };
-  return { login: false };
+  console.log("hit");
+  if (req.isAuthenticated()) return res.send({ userIsAuth: true });
+  return res.send({ userIsAuth: false });
 });
 
 app
