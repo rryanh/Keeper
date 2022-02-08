@@ -37,7 +37,6 @@ function CreateArea(props) {
 
   function handleChange(event) {
     const { name, value } = event.target;
-
     setNote((prevNote) => {
       return {
         ...prevNote,
@@ -63,10 +62,12 @@ function CreateArea(props) {
     });
 
     props.onAdd();
+
     setNote({
       title: "",
       content: "",
     });
+
     setShow(false);
   }
 

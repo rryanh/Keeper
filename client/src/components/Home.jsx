@@ -11,7 +11,6 @@ export default function Home() {
     const newNotes = await AJAX("/notes");
 
     if (newNotes === notes) return;
-
     setNotes(newNotes);
   }
 

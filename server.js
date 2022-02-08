@@ -13,13 +13,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-// middleware
-//app.use(bodyParser.urlencoded({ extended: true }));
-
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "/client/build")));
-// app.use(express.static(path.join(__dirname, "/client/build")));
-console.log(__dirname);
 app.use(
   session({
     secret: process.env.SESSION_KEY,
@@ -27,12 +22,10 @@ app.use(
     saveUninitialized: false,
   })
 );
-
 app.use(passport.initialize());
 app.use(passport.session());
 
 mongoose.connect(`${process.env.MONGO_DB}/keeperDB`);
-
 const userSchema = new mongoose.Schema({
   googleId: String,
   notes: String,
@@ -71,8 +64,7 @@ passport.use(
   )
 );
 
-//routes
-
+//google routes
 app
   .route("/app")
   .get(
@@ -87,78 +79,81 @@ app
   .route("/auth/google")
   .get(passport.authenticate("google", { scope: ["profile"] }));
 
-app.route("/auth-user").get(function (req, res) {
-  console.log("hit");
-  if (req.isAuthenticated()) return res.send({ userIsAuth: true });
-  return res.send({ userIsAuth: false });
-});
-
-app
-  .route("/notes")
-  .get(function (req, res) {
-    const note = req.body;
-    try {
-      User.findById(req.user.id, function (err, user) {
-        if (err) throw new Error(err);
-        if (!user.notes) return res.send(JSON.stringify([]));
-        res.send(user.notes);
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  })
-  .post(function (req, res) {
-    const note = req.body;
-    try {
-      User.findById(req.user.id, function (err, user) {
-        let userNoteArr = [];
-        if (err) throw new Error(err);
-        if (user.notes) userNoteArr = JSON.parse(user.notes);
-
-        userNoteArr.push(note);
-        user.notes = JSON.stringify(userNoteArr);
-
-        user.save(function () {
-          res.send({ success: true });
-        });
-      });
-    } catch (error) {
-      console.log(error);
-      res.send({ success: false });
-    }
-  })
-  .delete(function (req, res) {
-    const note = req.body;
-    try {
-      User.findById(req.user.id, function (err, user) {
-        console.log("delete hit");
-        if (err) throw new Error(err);
-        if (!user.notes) return res.send({ success: true });
-        let userNoteArr = JSON.parse(user.notes);
-        console.log(userNoteArr);
-        console.log(note);
-        user.notes = JSON.stringify(
-          userNoteArr.filter(
-            (userNote) =>
-              userNote.title != note.title && userNote.content != note.content
-          )
-        );
-
-        user.save(function () {
-          res.send({ success: true });
-        });
-      });
-    } catch (error) {
-      console.log(error);
-      res.send({ success: false });
-    }
-  });
-
-app.get("*", function (req, res) {
-  res.sendFile("index.html", {
-    root: path.join(__dirname, "/client/build/"),
-  });
-});
+//routes
+app.route("/auth-user").get(auth);
+app.route("/notes").get(getNote).post(postNote).delete(deleteNote);
+app.get("*", clientSideRouting);
 
 const PORT = +process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`running on port 3000`));
+
+function auth(req, res) {
+  if (req.isAuthenticated()) return res.send({ userIsAuth: true });
+  return res.send({ userIsAuth: false });
+}
+
+function getNote(req, res) {
+  try {
+    User.findById(req.user.id, function (err, user) {
+      if (err) throw new Error(err);
+      if (!user.notes) return res.send(JSON.stringify([]));
+      res.send(user.notes);
+    });
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+function deleteNote(req, res) {
+  const note = req.body;
+  try {
+    User.findById(req.user.id, function (err, user) {
+      console.log("delete hit");
+      if (err) throw new Error(err);
+      if (!user.notes) return res.send({ success: true });
+      let userNoteArr = JSON.parse(user.notes);
+      console.log(userNoteArr);
+      console.log(note);
+      user.notes = JSON.stringify(
+        userNoteArr.filter(
+          (userNote) =>
+            userNote.title != note.title && userNote.content != note.content
+        )
+      );
+
+      user.save(function () {
+        res.send({ success: true });
+      });
+    });
+  } catch (error) {
+    console.log(error);
+    res.send({ success: false });
+  }
+}
+
+function postNote(req, res) {
+  const note = req.body;
+  try {
+    User.findById(req.user.id, function (err, user) {
+      let userNoteArr = [];
+      if (err) throw new Error(err);
+      if (user.notes) userNoteArr = JSON.parse(user.notes);
+
+      userNoteArr.push(note);
+      user.notes = JSON.stringify(userNoteArr);
+
+      user.save(function () {
+        res.send({ success: true });
+      });
+    });
+  } catch (error) {
+    console.log(error);
+    res.send({ success: false });
+  }
+}
+
+function clientSideRouting(req, res) {
+  res.sendFile("index.html", {
+    root: path.join(__dirname, "/client/build/"),
+  });
+}
