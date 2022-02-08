@@ -9,7 +9,6 @@ import passport from "passport";
 import passportLocalMongoose from "passport-local-mongoose";
 import GoogleStrategy from "passport-google-oauth20";
 import findOrCreate from "mongoose-findorcreate";
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const PORT = 3000;
@@ -33,7 +32,7 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-mongoose.connect("mongodb://localhost:27017/keeperDB");
+mongoose.connect(`${process.env.mongo_DB}/keeperDB`);
 
 const userSchema = new mongoose.Schema({
   googleId: String,
@@ -101,7 +100,7 @@ app
     try {
       User.findById(req.user.id, function (err, user) {
         if (err) throw new Error(err);
-        if (!user.notes) return res.send(JSON.stringify({ notes: [] }));
+        if (!user.notes) return res.send(JSON.stringify([]));
         res.send(user.notes);
       });
     } catch (error) {
@@ -161,4 +160,4 @@ app.get("*", function (req, res) {
   });
 });
 
-app.listen(3000, () => console.log(`running on port 3000`));
+app.listen(process.env.PORT, () => console.log(`running on port 3000`));
